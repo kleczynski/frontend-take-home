@@ -1,73 +1,93 @@
-# React + TypeScript + Vite
+# PokéTracker Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend application for PokéTracker — a field data tool used by Pokémon Rangers to log, review, and act on wildlife sightings.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **React + Vite + TypeScript** — SPA with fast HMR
+- **TanStack Router** — file-based client routing with URL-synced search params
+- **TanStack Query** — server state management with optimistic updates
+- **TanStack Table** — headless table for paginated sightings view
+- **TanStack Form** — form state management with Zod validation
+- **Tailwind CSS v4 + shadcn/ui** — styling and UI component library
+- **@xyflow/react** — workflow builder canvas
+- **recharts** — analytics charts (via shadcn chart wrapper)
 
-## React Compiler
+## Prerequisites
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Node.js 18+
+- pnpm 9+
+- Backend server running on `http://localhost:8000` (see backend README)
 
-## Expanding the ESLint configuration
+## Installation
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cd frontend
+pnpm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Development
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Start the backend first:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cd ..
+uv sync
+uv run uvicorn app.main:app --reload
+```
+
+Then start the frontend dev server:
+
+```bash
+pnpm dev
+```
+
+The app runs at `http://localhost:3000`. API requests are proxied to the backend via Vite's dev server proxy (`/api/*` → `http://localhost:8000/*`).
+
+## Build
+
+```bash
+pnpm build
+```
+
+## Features
+
+### Sightings Table
+- Server-side paginated table with page size selector (25/50/100/200)
+- Filters: Pokémon name, region, weather, time of day, date range
+- All filter state synced to URL search params
+- Optimistic delete with automatic rollback on error
+- "Log Sighting" modal form with Pokémon typeahead search
+- No blank flashes during loading (keepPreviousData)
+
+### Workflow Builder
+- List page with workflow cards showing name, node count, and creation date
+- Visual node-based editor powered by React Flow
+- Three node types: Trigger, Filter (dual match/no-match outputs), Action
+- Drag-and-drop or click-to-add from node palette
+- Right-side configuration panel for selected nodes
+- Explicit Save button with unsaved changes indicator
+- Delete nodes via panel, keyboard (Delete/Backspace), or on deletion in canvas
+
+### Analytics Dashboard
+- Stat cards: total sightings, confirmed count, shiny count/rate, unique species
+- Charts: sightings per month, by weather, by time of day, top 10 Pokémon, by rarity tier
+- Region and date range filters synced to URL
+
+## Project Structure
+
+```
+src/
+  main.tsx              # App entry point
+  routes/               # TanStack Router file-based routes
+    __root.tsx           # Root layout with sidebar
+    sightings/           # Sightings feature
+    workflows/           # Workflow builder feature
+    analytics/           # Analytics dashboard
+  components/            # Shared components
+    ui/                  # shadcn/ui components
+    data-table/          # Reusable DataTable
+  hooks/                 # TanStack Query hooks
+  types/                 # TypeScript type definitions
+  lib/                   # API client and utilities
 ```
