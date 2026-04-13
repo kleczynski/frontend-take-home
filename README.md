@@ -17,32 +17,20 @@ Frontend application for PokéTracker — a field data tool used by Pokémon Ran
 
 - Node.js 18+
 - pnpm 9+
-- Backend server running on `http://localhost:8000` (see backend README)
 
 ## Installation
 
 ```bash
-cd frontend
 pnpm install
 ```
 
 ## Development
 
-Start the backend first:
-
-```bash
-cd ..
-uv sync
-uv run uvicorn app.main:app --reload
-```
-
-Then start the frontend dev server:
-
 ```bash
 pnpm dev
 ```
 
-The app runs at `http://localhost:3000`. API requests are proxied to the backend via Vite's dev server proxy (`/api/*` → `http://localhost:8000/*`).
+The app runs at `http://localhost:3000`.
 
 ## Build
 
