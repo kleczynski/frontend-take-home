@@ -30,7 +30,7 @@ export function convertToRFEdges(apiEdges: WFEdge[]): Edge[] {
 
 export function convertFromRFNodes(rfNodes: Node[]): WFNode[] {
   return rfNodes.map((n) => {
-    const { onDelete: _, ...data } = n.data as NodeData & { onDelete?: unknown };
+    const data = n.data as NodeData & { onDelete?: unknown };
     return {
       id: n.id,
       type: n.type as "trigger" | "filter" | "action",
